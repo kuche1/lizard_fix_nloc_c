@@ -508,16 +508,21 @@ def line_counter(tokens, reader):
     context = reader.context
     context.current_line = 1
     newline = 1
+    tokens_on_line = []
     for token in tokens:
         if token != "\n":
+            tokens_on_line.append(token)
             count = token.count('\n')
             context.current_line += count
+            if newline == 1 and (tokens_on_line.count('{') + tokens_on_line.count('}') == len(tokens_on_line)):
+                newline = 0
             context.add_nloc(count + newline)
             newline = 0
             yield token
         else:
             context.current_line += 1
             newline = 1
+            tokens_on_line = []
 
 
 def token_counter(tokens, reader):
